@@ -12,7 +12,8 @@ export default class Packagers extends React.PureComponent {
   }
 
   setupSocket = () => {
-    this.socket = new WebSocket('wss://webpack-dll-prod.herokuapp.com');
+    let prefix = window.location.protocol == 'https:' ? 'wss://' : 'ws://'
+    this.socket = new WebSocket(prefix + window.location.host);
 
     this.socket.onmessage = ev => {
       try {

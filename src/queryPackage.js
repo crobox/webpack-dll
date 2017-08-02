@@ -25,7 +25,7 @@ module.exports = function queryPackage(req, res) {
 
     client.request(config.npmRegistryUrl + name, {auth: config.npmRegistryAuth}, function(err, response, body) {
       if (err) {
-        return res.sendStatus(err.statusCode);
+        return res.sendStatus(err.statusCode || 500);
       }
 
       try {
@@ -53,7 +53,10 @@ module.exports = function queryPackage(req, res) {
 
       res.send({
         name: package.name,
-        version: packageVersion
+        version: packageVersion,
+        license: package.license,
+        description: package.description,
+        keywords: package.keywords
       });
   }).catch(function (err) {
     console.error(err);
