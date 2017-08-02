@@ -1,6 +1,8 @@
 {
   "clientDllOrigin": "https://webpack-sandbox.herokuapp.com",
   "clientQueryOrigin": "https://webpackbin-test.firebaseapp.com",
+  "npmRegistryUrl": "https://registry.npmjs.org/",
+  "npmRegistryAuth": {},
   "packagerServiceUrls": [
     "http://45.32.65.145"
   ],

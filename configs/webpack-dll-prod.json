@@ -3,6 +3,8 @@
     "https://webpack-sandbox-prod.herokuapp.com",
     "https://webpack-sandbox-prod-eu.herokuapp.com"
   ],
+  "npmRegistryUrl": "https://registry.npmjs.org/",
+  "npmRegistryAuth": {},
   "clientQueryOrigin": "https://www.webpackbin.com",
   "packagerServiceUrls": [
     "http://45.32.65.145",

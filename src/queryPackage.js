@@ -1,5 +1,13 @@
-const request = require('request');
-const registryUrl = require('registry-url');
+const config = require(`../configs/${process.env.WEBPACK_DLL_ENV}.json`);
+const RegistryClient = require('npm-registry-client');
+
+function noop () {}
+const silentLog = {
+  error: noop, warn: noop, info: noop, verbose: noop,
+  silly: noop, http: noop, pause: noop, resume: noop
+};
+
+const client = new RegistryClient({log: silentLog});
 
 module.exports = function queryPackage(req, res) {
   var nameSplit = req.params.packageName.split('@');
@@ -14,21 +22,21 @@ module.exports = function queryPackage(req, res) {
   var version = nameSplit[1];
 
   new Promise(function (resolve, reject) {
-    request(registryUrl() + name, function (err, response, body) {
-      if (err || response.statusCode < 200 || response.statusCode >= 300) {
-        return res.sendStatus(404);
+
+    client.request(config.npmRegistryUrl + name, {auth: config.npmRegistryAuth}, function(err, response, body) {
+      if (err) {
+        return res.sendStatus(err.statusCode);
       }
 
       try {
         var package = JSON.parse(body);
       } catch (e) {
-        return reject();
+        return reject(e);
       }
 
       resolve(package);
     });
-  })
-    .then(function (package) {
+  }).then(function (package) {
       var packageVersion
 
       if (version) {
@@ -47,8 +55,8 @@ module.exports = function queryPackage(req, res) {
         name: package.name,
         version: packageVersion
       });
-    })
-    .catch(function (err) {
-      res.sendStatus(404);
-    });
+  }).catch(function (err) {
+    console.error(err);
+    res.sendStatus(500);
+  });
 }
