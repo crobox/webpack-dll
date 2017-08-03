@@ -131,7 +131,7 @@ app.get('/', (req, res) => {
 
 app.get('*', (req, res) => renderUnknownPage(req, res));
 
-var server = app.listen(process.env.NODE_ENV === 'production' ? process.env.PORT : 5000);
+var server = app.listen(process.env.NODE_ENV === 'production' ? process.env.DLL_PORT : 5000);
 
 process.on('SIGTERM', function () {
   dbInstance.close();
