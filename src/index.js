@@ -37,25 +37,22 @@ function extractPackages (req, res, next) {
   next()
 }
 
-function respondIfExists (fileName) {
+function respondIfExists () {
   return function (req, res, next) {
     var vendorsBundleName = utils.getVendorsBundleName(req.params.packages);
 
-    database.fileExists(vendorsBundleName, fileName)
-      .then(function (exists) {
-        if (exists) {
-          database.getFile(vendorsBundleName, fileName, res)
-            .then(function () {
-              console.log('# DATABASE RESOLVE', fileName, req.params.packages, res.statusCode);
-            })
-            .catch(function (err) {
-              console.log('Could not get file ' + fileName + ' from database');
-              res.sendStatus(500);
-            });
-        } else {
-          next();
-        }
-      })
+    database.fileExists(vendorsBundleName).then(function (exists) {
+      if (exists) {
+        database.getFile(vendorsBundleName, res).then(function () {
+            console.log('# DATABASE RESOLVE', vendorsBundleName, req.params.packages, res.statusCode);
+        }).catch(function (err) {
+            console.error('Could not get file ' + fileName + ' from database');
+            res.sendStatus(500);
+        });
+      } else {
+        next();
+      }
+    });
   }
 }
 
@@ -77,11 +74,8 @@ app.get('/query/:packageName', cors({
   origin: config.clientQueryOrigin
 }), queryPackage);
 
-app.get('/:version(v1|v2|v3|v4|v5|v6)/*/dll.js', extractPackages, cors({
-  origin: config.clientDllOrigin
-}), respondIfExists('dll.js'), extractAndBundle('dll.js'));
 
-app.get('/:version(v1|v2|v3|v4|v5|v6)/*/manifest.json', extractPackages, respondIfExists('manifest.json'), extractAndBundle('manifest.json'));
+app.get('/bundle/*/bundle.tar.gz', extractPackages, respondIfExists(), extractAndBundle());
 
 /*
   Stats

@@ -18,7 +18,6 @@ module.exports = {
     var contentType = mime.lookup(fileName);
     var contentLength = content.length;
 
-
     return function (request) {
       try {
         request.send(200, content, {
