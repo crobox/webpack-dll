@@ -110,7 +110,7 @@ module.exports = {
             setTimeout(function () {
               availablePackager.isAvailable = true;
             }, 10000);
-            requestQueue.getBundle(vendorBundleName, packages);
+            requestQueue.getBundle(vendorsBundleName, packages);
           }
           availablePackager.errorCount++;
           emitPackagersUpdate();
