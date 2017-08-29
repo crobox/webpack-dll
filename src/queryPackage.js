@@ -37,7 +37,7 @@ module.exports = function queryPackage(req, res) {
       resolve(package);
     });
   }).then(function (package) {
-      var packageVersion
+      var packageVersion = package['dist-tags'].latest;
 
       if (version) {
         if (package['dist-tags'][version]) {
@@ -45,19 +45,14 @@ module.exports = function queryPackage(req, res) {
         } else if (package.versions[version]) {
           packageVersion = version
         } else {
-          throw new Error('Version not valid')
+          return res.sendStatus(404, 'Version not valid');
         }
-      } else {
-        packageVersion = package['dist-tags'].latest
       }
-
-      res.send({
-        name: package.name,
-        version: packageVersion,
-        license: package.license,
-        description: package.description,
-        keywords: package.keywords
-      });
+      var versioned = package.versions[packageVersion];
+      if(!versioned) {
+        return res.sendStatus(404, 'Version not valid');
+      }
+      res.send(versioned);
   }).catch(function (err) {
     console.error(err);
     res.sendStatus(500);
