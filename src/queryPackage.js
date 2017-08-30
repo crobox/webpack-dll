@@ -25,6 +25,7 @@ module.exports = function queryPackage(req, res) {
 
     client.request(config.npmRegistryUrl + name, {auth: config.npmRegistryAuth}, function(err, response, body) {
       if (err) {
+        console.error(err);
         return res.sendStatus(err.statusCode || 500);
       }
 
